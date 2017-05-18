@@ -4,6 +4,9 @@ Collection of simple utilities for (my) daily tasks
 
 ## List of utilities
 
+- [animu](https://raw.githubusercontent.com/nxnev/utils/master/bin/animu)
+  - Description: Comfy video converter
+  - Usage: `animu /path/to/dir`
 - [cbz](https://raw.githubusercontent.com/nxnev/utils/master/bin/cbz)
   - Description: Create CBZs
   - Usage: `cbz /path/to/dir` (file will be saved in `/path/to/dir.cbz`)
