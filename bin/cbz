@@ -1,18 +1,13 @@
 #!/usr/bin/env bash
 
 v_dir="${1}"
-v_temp_dir=$(mktemp -d -p "${v_dir%/*}" temp_dir.XXXXXXXXXX)
-v_cbz="${v_dir%/*}/${v_dir##*/}.cbz"
-v_num="1"
-v_seq=$(ls -1 "${v_dir}" | wc -l)
-v_seq=$(seq -w "${v_seq}")
+echo "${v_dir}"
+v_temp_dir=$(mktemp -d -p "${v_dir}/.." temp_dir.XXXXXXXXXX)
+echo "${v_temp_dir}"
+v_cbz="${v_dir}/../${v_dir##*/}.cbz"
+echo "${v_cbz}"
 
-cp "${v_dir}/"* "${v_temp_dir}"
-
-for i in $(ls -v1 "${v_temp_dir}"); do
-  mv -f "${v_temp_dir}/${i}" "${v_temp_dir}/"$(echo "${v_seq}" | cut -d $'\n' -f "${v_num}")".${i##*.}"
-  ((v_num++))
-done
+cp -r "${v_dir}/"* "${v_temp_dir}"
 
 7z a -mx=0 -tzip "${v_cbz}" "${v_temp_dir}/"*
 
