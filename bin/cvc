@@ -23,7 +23,7 @@ echo "echo \"  Start: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
 while read -r i; do
   v_file_i="${i##*/}"
   v_file_o="${v_file_i%.*}.mkv"
-  if [[ -f "${v_dir}/${v_file_i}" ]] && [[ ! -f "${v_dir}/-/${v_file_o}.mkv" ]]; then
+  if [[ -f "${v_dir}/${v_file_i}" ]] && [[ ! -f "${v_dir}/-/${v_file_o}" ]]; then
     command="ffmpeg -y -i '${v_dir}/${v_file_i}' -map 0 -c copy -c:v libx264 -vf scale=480x270 -strict -2 '${v_dir}/-/${v_file_o}'"
     echo "${command}" >> "${v_script}"
     echo "echo \"  ${v_file_o}: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
