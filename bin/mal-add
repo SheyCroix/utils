@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Replace this
+v_MALSESSIONID="1234abcd"
+v_csrf_token="abcd1234"
+
+v_page="${1}"
+v_page_fix=$((50 * (v_page - 1)))
+v_id=$(curl -# -b "MALSESSIONID=${v_MALSESSIONID};is_logged_in=1" -L "https://myanimelist.net/anime.php?o=9&c%5B0%5D=a&c%5B1%5D=d&cv=2&w=1&show=${v_page_fix}" | grep -F -e 'button_add' | cut -d '"' -f 14 | cut -d '=' -f 2 | cut -d '&' -f 1)
+v_total="0"
+v_num="0"
+
+while read -r i; do
+  ((v_total++))
+done <<< "${v_id}"
+
+echo
+if [[ "${v_id}" == "" ]]; then
+  echo "Page: ${v_page} | To be added: 0"
+  exit 0
+else
+  echo "Page: ${v_page} | To be added: ${v_total}"
+fi
+
+while read -r i; do
+  sleep 3
+  echo
+  ((v_num++))
+  echo "[ Page: ${v_page} | ${v_num}/${v_total} ]"
+  echo "Anime ID: ${i}"
+  echo "Anime URL: https://myanimelist.net/anime/${i}"
+  curl -# -b "MALSESSIONID=${v_MALSESSIONID};is_logged_in=1" -F "anime_id=${i}" -F 'add_anime[status]=6' -F "csrf_token=${v_csrf_token}" -L 'https://myanimelist.net/ownlist/anime/add' > '/dev/null'
+  echo "Done"
+done <<< "${v_id}"
