@@ -22,3 +22,24 @@ Collection of simple utilities for (my) daily tasks
 - [md5-renamer](https://raw.githubusercontent.com/nxnev/utils/master/bin/md5-renamer)
   - Description: Rename all files of current working directory as `{md5}.{ext}`
   - Usage: `md5-renamer`
+- [ransg](https://raw.githubusercontent.com/nxnev/utils/master/bin/ransg)
+  - Description: Random string generator
+  - Usage: `ransg mode length amount`
+    - `mode`: possible values are:
+      - `1`: `a-z`
+      - `2`: `a-z`, `A-Z`
+      - `3`: `a-z`, `A-Z`, `0-9`
+      - `4`: `a-z`, `A-Z`, `0-9`, ``!"#$%&'( )*+,-./:;<=>?@[\]^_`{|}~``
+  - Examples:
+    - ```
+      $ ransg 2 12 4
+      VfFPKHbEvUVN
+      RaYWPApENYQe
+      bdqCZKfvxZPe
+      vyPrEUiVVuqY
+      ```
+    - ```
+      $ ransg 4 64 2
+      u-0?SzXR6?I~&K!bq#>D"FwPKn}h$TFrfu<AoZ)~.3v3s(ZbN^Dt9U#YbGP/}a<{
+      X=1i]C4."DNWdOQPwu&(kkFZ~x2^.%.rHt!:d`M^mx)S{~+{X/^S']5h.7Pxl-L}
+      ```
