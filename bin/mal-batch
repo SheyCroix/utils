@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+v_a="${1}"
+v_b="${2}"
+
+until [[ "${v_a}" -gt "${v_b}" ]]; do
+  mal-add "${v_a}"
+  ((v_a++))
+done
