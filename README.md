@@ -45,3 +45,11 @@ Collection of simple utilities for (my) daily tasks
       u-0?SzXR6?I~&K!bq#>D"FwPKn}h$TFrfu<AoZ)~.3v3s(ZbN^Dt9U#YbGP/}a<{
       X=1i]C4."DNWdOQPwu&(kkFZ~x2^.%.rHt!:d`M^mx)S{~+{X/^S']5h.7Pxl-L}
       ```
+- [sadpanda](https://raw.githubusercontent.com/nxnev/utils/master/bin/sadpanda)
+  - Description: ExHentai Gallery Downloader
+  - Usage: `sadpanda <url> <start> <end> [<output-directory>]`
+  - Examples:
+    - `sadpanda https://exhentai.org/g/1063613/4c498bd710/ 1 64` (this would download all pictures of [this gallery](https://exhentai.org/g/1063613/4c498bd710) in current directory)
+    - `sadpanda https://exhentai.org/g/353151/00a898bae1 74 78 ~/Pictures/Saya` (this would download from page 74 to page 78 of [this gallery](https://exhentai.org/g/353151/00a898bae1) in ~/Pictures/Saya)
+  - Notes:
+    - This script doesn't work out of the box. Open it with some text editor and provide your `ipb_member_id` and `ipb_pass_hash` cookies
