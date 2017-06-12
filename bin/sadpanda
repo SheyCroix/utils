@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+v_url="${1}"
+v_a="${2}"
+v_b="${3}"
+v_path="${4}"
+
+v_cookie_1_1='ipb_member_id'
+v_cookie_1_2=''
+v_cookie_2_1='ipb_pass_hash'
+v_cookie_2_2=''
+
+v_id_1=$(cut -d '/' -f 5 <<< "${v_url}")
+v_id_2=$(cut -d '/' -f 6 <<< "${v_url}")
+v_id="${v_id_1}/${v_id_2}"
+v_url="https://exhentai.org/g/${v_id}"
+
+v_page_a=$(((v_a - 1) / 40))
+v_page_b=$(((v_b - 1) / 40))
+v_pages=$((v_page_b - v_page_a + 1))
+v_total=$((v_b - v_a + 1))
+
+if [[ -d "${v_path}" ]]; then :; else
+  v_path='.'
+fi
+v_links=$(mktemp -p "${v_path}" 'links_XXXXXXXXXX')
+
+echo "Connecting..."
+v_name=$(curl -# -L --cookie "${v_cookie_1_1}=${v_cookie_1_2};${v_cookie_2_1}=${v_cookie_2_2}" "${v_url}" | cut -d '"' -f 1- --output-delimiter $'\n' | cut -d $'\n' -f 14 | cut -d '>' -f 2- | rev | cut -d '-' -f 2- | cut -d ' ' -f 2- | rev)
+echo "URL: ${v_url}"
+echo "Name: ${v_name}"
+echo ''
+
+v_tmp='1'
+echo 'Collecting links...'
+until [[ "${v_page_a}" -gt "${v_page_b}" ]]; do
+  sleep '3'
+  echo "[ ${v_tmp} / ${v_pages} ]:"
+  curl -# -L --cookie "${v_cookie_1_1}=${v_cookie_1_2};${v_cookie_2_1}=${v_cookie_2_2}" "${v_url}?p=${v_page_a}" | cut -d '"' -f 1- --output-delimiter $'\n' | grep -F -e 'exhentai.org/s/' >> "${v_links}"
+  ((v_page_a++))
+  ((v_tmp++))
+done
+echo "Links saved in: \"${v_links}\""
+echo ''
+
+v_tmp='1'
+echo 'Downloading...'
+while read -r i; do
+  v_page_id=${i##*-}
+  if [[ "${v_page_id}" == "${v_a}" ]] && ! [[ "${v_a}" -gt "${v_b}" ]]; then
+    sleep 3
+    echo "[ ${v_tmp} / ${v_total} ]:"
+    v_page=$(curl -# -L --cookie "${v_cookie_1_1}=${v_cookie_1_2};${v_cookie_2_1}=${v_cookie_2_2}" "${i}" | cut -d '"' -f 1- --output-delimiter $'\n' | grep -F -e '/h/')
+    v_ext=${v_page##*.}
+    v_output="${v_path}/${v_page_id}.${v_ext}"
+    if [[ -f "${v_output}" ]]; then
+      echo "Warning: \"${v_page_id}.${v_ext}\" already exists"
+      else
+      curl -# -L -o "${v_output}" "${v_page}"
+    fi
+    ((v_a++))
+    ((v_tmp++))
+  fi
+done < "${v_links}"
+echo ''
+
+echo "Deleting \"${v_links##*/}\" file..."
+rm -f "${v_links}"
+echo 'Done'
