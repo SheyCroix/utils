@@ -26,8 +26,8 @@ Collection of simple utilities for (my) daily tasks
 - Usage: `mal-batch start end`
 
 ### [md5-renamer](https://raw.githubusercontent.com/nxnev/utils/master/bin/md5-renamer)
-- Description: Rename all files of current working directory as `{md5}.{ext}`
-- Usage: `md5-renamer`
+- Description: Rename all files of `dir` as `{md5}.{ext}`
+- Usage: `md5-renamer <dir1> <dir2> <dir3> ...`
 
 ### [ransg](https://raw.githubusercontent.com/nxnev/utils/master/bin/ransg)
 - Description: Random string generator
