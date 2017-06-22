@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
-for i in *; do
-  if [[ -f "${i}" ]]; then
-    mv "${i}" $(md5sum "${i}" | cut -d " " -f 1)."${i##*.}"
-  fi
+for v_dir; do
+  echo "Directory: ${v_dir}"
+  for v_file in "${v_dir}/"*; do
+    if [[ -f "${v_file}" ]]; then
+      v_old="${v_file##*/}"
+      v_ext="${v_old##*.}"
+      if [[ "${v_ext}" == "${v_old}" ]]; then
+        v_new=$(md5sum "${v_file}" | cut -d ' ' -f '1')
+      else
+        v_new=$(md5sum "${v_file}" | cut -d ' ' -f '1')".${v_ext}"
+      fi
+      mv -T "${v_dir}/${v_old}" "${v_dir}/${v_new}"
+      echo "New: ${v_new} | Old: ${v_old}"
+    fi
+  done
+  echo
 done
