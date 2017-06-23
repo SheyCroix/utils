@@ -11,8 +11,9 @@ Collection of simple utilities for (my) daily tasks
 ### [cvc](https://raw.githubusercontent.com/nxnev/utils/master/bin/cvc)
 - Description: Comfy video converter
 - Usage:
-  - Add videos of `dir` to batch script: `cvc /path/to/dir`
-  - Start batch script: `cvc e`
+  - Add videos of `dir` to batch script: `cvc <dir1> <dir2> <dir3> ...`
+  - Create new batch script: `cvc n`
+  - Start batch script: `cvc s`
 
 ### [mal-add](https://raw.githubusercontent.com/nxnev/utils/master/bin/mal-add)
 - Description: Add every anime listed on MyAnimeList into your list
