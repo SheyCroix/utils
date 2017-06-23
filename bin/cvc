@@ -1,33 +1,45 @@
 #!/usr/bin/env bash
 
-v_dir="${1}"
-v_dir_name="${v_dir##*/}"
 v_script="${HOME}/Videos/cvc.sh"
 v_log="${HOME}/Videos/log"
 
-if [[ "${v_dir}" == "e" ]]; then
+if [[ "${1}" == 'n' ]]; then
+  rm -f "${v_script}"
+  touch "${v_script}"
+  chmod a-rwx,u+rwx "${v_script}"
+  echo '#!/usr/bin/env bash' > "${v_script}"
+  exit 0
+fi
+
+if [[ "${1}" == 's' ]]; then
   ${v_script}
   exit 0
 fi
 
-v_list=$(ls -v1 "${v_dir}")
+for v_arg; do
 
-if [[ ! -d "${v_dir}/-" ]]; then
-  mkdir "${v_dir}/-"
-fi
+  v_dir="${v_arg}"
+  v_dir_name="${v_dir##*/}"
+  v_list=$(ls -v1 "${v_dir}")
 
-echo "" >> "${v_script}"
-echo "echo \"[${v_dir_name}]\" >> '${v_log}'" >> "${v_script}"
-echo "echo \"  Start: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
-
-while read -r i; do
-  v_file_i="${i##*/}"
-  v_file_o="${v_file_i%.*}.mkv"
-  if [[ -f "${v_dir}/${v_file_i}" ]] && [[ ! -f "${v_dir}/-/${v_file_o}" ]]; then
-    command="ffmpeg -y -i '${v_dir}/${v_file_i}' -map 0 -c copy -c:v libx264 -vf scale=480x270 -strict -2 '${v_dir}/-/${v_file_o}'"
-    echo "${command}" >> "${v_script}"
-    echo "echo \"  ${v_file_o}: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
+  if [[ ! -d "${v_dir}/-" ]]; then
+    mkdir "${v_dir}/-"
   fi
-done <<< "${v_list}"
 
-echo "echo \"\" >> '${v_log}'" >> "${v_script}"
+  echo "" >> "${v_script}"
+  echo "echo \"[${v_dir_name}]\" >> '${v_log}'" >> "${v_script}"
+  echo "echo \"  Start: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
+
+  while read -r i; do
+    v_file_i="${i##*/}"
+    v_file_o="${v_file_i%.*}.mkv"
+    if [[ -f "${v_dir}/${v_file_i}" ]] && [[ ! -f "${v_dir}/-/${v_file_o}" ]]; then
+      command="ffmpeg -y -i '${v_dir}/${v_file_i}' -map 0 -c copy -c:v libx264 -vf scale=480x270 -strict -2 '${v_dir}/-/${v_file_o}'"
+      echo "${command}" >> "${v_script}"
+      echo "echo \"  ${v_file_o}: \$(date +'%F %T')\" >> '${v_log}'" >> "${v_script}"
+    fi
+  done <<< "${v_list}"
+
+  echo "echo \"\" >> '${v_log}'" >> "${v_script}"
+
+done
