@@ -26,6 +26,17 @@ Collection of simple utilities for (my) daily tasks
 ### [mal-batch](https://raw.githubusercontent.com/nxnev/utils/master/bin/mal-batch)
 - Usage: `mal-batch start end`
 
+### [mal-comment](https://raw.githubusercontent.com/nxnev/utils/master/bin/mal-comment)
+- Usage:
+  - Get a list of users of certain club: `mal-comment e <club-id> <page-a> <page-b> [<output-file>]`
+  - Post comment: `mal-comment c <users-list> <comment-file> [<logfile>]`
+- Examples:
+  - Get a list of all users of [graph.anime.plus](https://myanimelist.net/clubs.php?cid=67199)' club: `mal-comment e 67199 1 184 ~/graph-anime-plus.txt`
+  - Deliver newsletter to all users of [graph.anime.plus](https://myanimelist.net/clubs.php?cid=67199)\' club: `mal-comment c ~/graph-anime-plus.txt ~/newsletter.txt ~/log.txt`
+- Notes:
+  - This script doesn't work out of the box. Open it with some text editor and provide your `MALSESSIONID` cookie and the `csrf_token`.
+  - You can set variable `v_check` with some string to avoid duplicated comments when running the script multiple times using the same `<users-list>` file.
+
 ### [md5-renamer](https://raw.githubusercontent.com/nxnev/utils/master/bin/md5-renamer)
 - Description: Rename all files of `dir` as `{md5}.{ext}`
 - Usage: `md5-renamer <dir1> <dir2> <dir3> ...`
