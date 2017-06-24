@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+v_MALSESSIONID='12345'
+v_csrf_token='asdfg'
+# v_check='some_string'
+
+f_comment() {
+
+if [[ ( -f "${v_log}" ) && ( -r ${v_log} ) && ( -w "${v_log}" ) ]]; then :
+elif [[ ( ! -e ${v_log} ) && ( "${v_log}" != '' ) ]]; then
+  touch "${v_log}"
+else
+  v_log=$(mktemp -p "${HOME}" 'mal-log-XXXX')
+fi
+
+v_total='0'
+while read -r v_i; do
+  ((v_total++))
+done < "${v_users}"
+
+echo "Log will be saved in: ${v_log}"
+echo 'Starting...'
+echo ''
+v_n='1'
+
+while read -r v_i; do
+
+  sleep '3'
+  v_html=$(curl -# -L "https://myanimelist.net/profile/${v_i}")
+  v_id=$(grep -F -e 'https://myanimelist.net/comments.php?id=' <<< "${v_html}" | cut -d '"' -f '2' | cut -d '=' -f '2' | head -n '1')
+
+  if [[ "${v_html}" == '' ]]; then
+    v_status='Error'
+  elif [[ "${v_id}" == '' ]]; then
+    v_status='User blocked comments'
+  elif grep -F -e "${v_check}" <<< "${v_html}" > '/dev/null'; then
+    v_status='Already posted'
+  elif curl -# -b "MALSESSIONID=${v_MALSESSIONID};is_logged_in=1" -F "csrf_token=${v_csrf_token}" -F "profileMemId=${v_id}" -F "commentText=<${v_comment}" -F 'commentSubmit=1' -L 'https://myanimelist.net/addcomment.php' > '/dev/null'; then
+    v_status='Ok'
+  else
+    v_status='Error'
+  fi
+
+  echo "[${v_n}/${v_total}]" >> "${v_log}"
+  echo "[${v_n}/${v_total}]"
+  echo "User: ${v_i}" >> "${v_log}"
+  echo "User: ${v_i}"
+  echo "ID: ${v_id}" >> "${v_log}"
+  echo "ID: ${v_id}"
+  echo "Status: ${v_status}" >> "${v_log}"
+  echo "Status: ${v_status}"
+  echo '' >> "${v_log}"
+  ((v_n++))
+
+done < "${v_users}"
+
+}
+
+f_extract() {
+
+if [[ ( -f "${v_users}" ) && ( -r ${v_users} ) && ( -w "${v_users}" ) ]]; then :
+elif [[ ( ! -e ${v_users} ) && ( "${v_users}" != '' ) ]]; then
+  touch "${v_users}"
+else
+  v_users=$(mktemp -p "${HOME}" 'mal-users-XXXX')
+fi
+
+echo "Users list will be saved in: ${v_users}"
+echo 'Extracting users list...'
+
+v_total='0'
+v_tmp="${v_a}"
+until [[ "${v_tmp}" -gt "${v_b}" ]]; do
+  ((v_total++))
+  ((v_tmp++))
+done
+
+v_n='1'
+v_tmp="${v_a}"
+until [[ "${v_tmp}" -gt "${v_b}" ]]; do
+  v_page="${v_tmp}"
+  v_page_fix=$(((v_page - 1) * 36))
+  v_url="https://myanimelist.net/clubs.php?action=view&t=members&id=${v_club}&show=${v_page_fix}"
+  sleep '3'
+  echo "[Page: ${v_page} | ${v_n}/${v_total}]"
+  v_content=$(curl -# -L "${v_url}" | grep -F -e 'class="picSurround"' | cut -d '"' -f '1-' --output-delimiter $'\n' | grep -F -e '/profile/' | cut -d '/' -f '3')
+  echo "${v_content}" >> "${v_users}"
+  ((v_n++))
+  ((v_tmp++))
+done
+
+}
+
+if [[ "${1}" == 'c' ]]; then
+  v_users="${2}"
+  v_comment="${3}"
+  v_log="${4}"
+  f_comment
+elif [[ "${1}" == 'e' ]]; then
+  v_club="${2}"
+  v_a="${3}"
+  v_b="${4}"
+  v_users="${5}"
+  f_extract
+fi
