@@ -2,7 +2,7 @@
 
 v_MALSESSIONID='12345'
 v_csrf_token='asdfg'
-# v_check='some_string'
+v_check='some_string'
 
 f_comment() {
 
@@ -10,7 +10,7 @@ if [[ ( -f "${v_log}" ) && ( -r ${v_log} ) && ( -w "${v_log}" ) ]]; then :
 elif [[ ( ! -e ${v_log} ) && ( "${v_log}" != '' ) ]]; then
   touch "${v_log}"
 else
-  v_log=$(mktemp -p "${HOME}" 'mal-log-XXXX')
+  v_log=$(mktemp -p '.' 'mal-log-XXXX')
 fi
 
 v_total='0'
@@ -62,7 +62,7 @@ if [[ ( -f "${v_users}" ) && ( -r ${v_users} ) && ( -w "${v_users}" ) ]]; then :
 elif [[ ( ! -e ${v_users} ) && ( "${v_users}" != '' ) ]]; then
   touch "${v_users}"
 else
-  v_users=$(mktemp -p "${HOME}" 'mal-users-XXXX')
+  v_users=$(mktemp -p '.' 'mal-users-XXXX')
 fi
 
 echo "Users list will be saved in: ${v_users}"
