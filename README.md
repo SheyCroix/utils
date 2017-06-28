@@ -70,3 +70,9 @@ Collection of simple utilities for (my) daily tasks
   - `sadpanda https://exhentai.org/g/353151/00a898bae1 74 78 ~/Pictures/Saya` (this would download from page 74 to page 78 of [this gallery](https://exhentai.org/g/353151/00a898bae1) in ~/Pictures/Saya)
 - Notes:
   - This script doesn't work out of the box. Open it with some text editor and provide your `ipb_member_id` and `ipb_pass_hash` cookies
+
+### [tmo](https://raw.githubusercontent.com/nxnev/utils/master/bin/tmo)
+- Description: TuMangaOnline Downloader
+- Usage: `tmo <url>`
+- Notes:
+  - Images will be saved in your current directory.
