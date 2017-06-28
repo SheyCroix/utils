@@ -6,7 +6,7 @@ Collection of simple utilities for (my) daily tasks
 
 ### [cbz](https://raw.githubusercontent.com/nxnev/utils/master/bin/cbz)
 - Description: Create CBZs
-- Usage: `cbz /path/to/dir` (file will be saved as `/path/to/dir.cbz`)
+- Usage: `cbz <dir1> <dir2> <dir3> ...` (file will be saved in the same parent directory of `dir`)
 
 ### [cvc](https://raw.githubusercontent.com/nxnev/utils/master/bin/cvc)
 - Description: Comfy video converter
