@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+v_url="${1}"
+v_id_manga=$(<<< "${v_url}" cut -d '/' -f '6')
+v_id_chapter=$(<<< "${v_url}" cut -d '/' -f '7')
+v_id_scanlation=$(<<< "${v_url}" cut -d '/' -f '8')
+v_url_2="https://tumangaonline.com/api/v1/imagenes?idManga=${v_id_manga}&numeroCapitulo=${v_id_chapter}&idScanlation=${v_id_scanlation}"
+
+echo "ID Manga: ${v_id_manga}"
+echo "ID Chapter: ${v_id_chapter}"
+echo "ID Scanlation: ${v_id_scanlation}"
+echo "Collecting links..."
+
+v_raw_data=$(curl -# -L "${v_url_2}")
+v_img_batch=$(<<< "${v_raw_data}" cut -d '[' -f '2' | cut -d ']' -f '1' | cut -d ',' -f '1-' --output-delimiter $'\n' | tr -d '\\"')
+
+v_total='0'
+while read -r v_i; do
+  ((v_total++))
+done <<< "${v_img_batch}"
+
+v_n='1'
+while read -r v_i; do
+  v_img_url="https://img1.tumangaonline.com/subidas/${v_id_manga}/${v_id_chapter}/${v_id_scanlation}/${v_i}"
+  echo "Downloading [ ${v_n} / ${v_total} ]"
+  sleep '3'
+  curl -# -L -o "${v_n}.${v_i##*.}" "${v_img_url}"
+  ((v_n++))
+done <<< "${v_img_batch}"
