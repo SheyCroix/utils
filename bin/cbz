@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
-v_dir="${1}"
-echo "${v_dir}"
-v_temp_dir=$(mktemp -d -p "${v_dir}/.." temp_dir.XXXXXXXXXX)
-echo "${v_temp_dir}"
-v_cbz="${v_dir}/../${v_dir##*/}.cbz"
-echo "${v_cbz}"
+for v_arg; do
 
-cp -r "${v_dir}/"* "${v_temp_dir}"
+  v_dir="${v_arg}"
+  echo "${v_dir}"
+  v_cbz="${v_dir}/../${v_dir##*/}.cbz"
+  echo "${v_cbz}"
 
-7z a -mx=0 -tzip "${v_cbz}" "${v_temp_dir}/"*
+  7z a -mx=0 -tzip "${v_cbz}" "${v_dir}/"*
+  rm -rf "${v_dir}"
 
-rm -rf "${v_temp_dir}"
+done
