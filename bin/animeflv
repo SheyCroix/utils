@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+for v_arg; do
+
+  v_url="${v_arg}"
+  sleep '3'
+  v_html=$(curl -# -L "${v_url}")
+  v_title=$(<<< "${v_html}" grep -F -e 'og:title' | cut -d '"' -f '4')
+  v_links=$(<<< "${v_html}" grep -F -e 'video[' | cut -d '"' -f '1-' --output-delimiter $'\n' | grep -F -A '1' -e 'src' | grep -F -e '/')
+
+  echo "[${v_title}]"
+  echo "${v_links}"
+  echo ''
+
+done
