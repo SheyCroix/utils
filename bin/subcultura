@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+
+# [Variables]
+
+# Options
+v_option_output=''
+v_option_range=''
+v_option_webcomic=''
+
+# Cookies
+v_cookie_1_1='Maria'
+v_cookie_1_2='0,+1,+1,+2,+3,+5,+8,+13,+21,+34,+55,+89'
+
+# Regular expressions
+v_regex_1='<div class="widget" id="navegacion_tiras">'
+v_regex_2='\/tira\/[0-9]+?\/'
+v_regex_3='<div class="widget" id="tira">'
+
+################################################################################
+
+# [Functions]
+
+f_show_help() {
+cat << 'EOF'
+Under construction...
+EOF
+}
+
+f_html() {
+sleep '3'
+v_html=$(curl -# -b "${v_cookie_1_1}=${v_cookie_1_2}" -L "${v_url_tmp}")
+}
+
+f_tira() {
+v_tmp=$(<<< "${v_html}" grep -F -A '7' -e "${v_regex_1}")
+v_tmp=$(<<< "${v_tmp}" head -n '8')
+v_tmp=$(<<< "${v_tmp}" grep -E -o -e "${v_regex_2}")
+}
+
+f_check() {
+v_url_main='http://'${v_option_webcomic}'.subcultura.es'
+v_url_tmp=${v_url_main}'/tira'
+f_html
+f_tira
+
+if [[ "${v_tmp}" == '' ]]; then
+  echo "ERROR: Webcomic is empty or does not exist"
+  exit 1
+fi
+
+v_limit_b=$(<<< "${v_tmp}" tail -n '1' | cut -d '/' -f '3')
+v_url_tmp=${v_url_main}'/tira/'${v_limit_b}
+f_html
+f_tira
+v_limit_a=$(<<< "${v_tmp}" head -n '1' | cut -d '/' -f '3')
+}
+
+f_download() {
+echo "[ Downloading: ${v_n} ]"
+v_regex='http:\/\/subcultura\.es\/webcomics\/'${v_option_webcomic}'\/([0-9]+)\.([^"]+)'
+v_url_tmp=${v_url_main}'/tira/'${v_n}
+f_html
+f_tira
+v_img=$(<<< "${v_html}" grep -F -A '3' -e "${v_regex_3}")
+v_img=$(<<< "${v_img}" grep -E -o -e "${v_regex}")
+v_output=${v_option_output}'/'${v_n}'.'${v_img##*.}
+
+if [[ -f "${v_output}" ]]; then
+  echo "Status: Already downloaded"
+else
+  curl -# -L -o "${v_output}" "${v_img}"
+  if [[ -f "${v_output}" ]]; then
+    echo "Status: Ok"
+  else
+    echo "Status: Error"
+  fi
+fi
+
+if [[ "${v_n}" == "${v_limit_a}" ]]; then
+  v_n=$(<<< "${v_tmp}" head -n '1' | cut -d '/' -f '3')
+elif [[ "${v_n}" == "${v_b}" ]]; then
+  ((v_n++))
+else
+  v_n=$(<<< "${v_tmp}" head -n '3' | tail -n '1' | cut -d '/' -f '3')
+fi
+}
+
+################################################################################
+
+# [Arguments]
+
+while [[ "${1}" != '' ]]; do
+  case "${1}" in
+    '-h' | '--help')
+        f_show_help
+        exit 0
+        ;;
+    '-o' | '--output')
+        v_option_output=${2}
+        shift 2
+        ;;
+    '-r' | '--range')
+        v_option_range=${2}
+        shift 2
+        ;;
+    '-w' | '--webcomic')
+        v_option_webcomic=${2}
+        shift 2
+        ;;
+    *)
+        shift
+        ;;
+  esac
+done
+
+################################################################################
+
+# [Main code]
+
+# Error handling
+if [[ "${v_option_webcomic}" == '' ]]; then
+  echo "Type '<command> --help' to get some help"
+  exit 1
+fi
+v_a=$(<<< "${v_option_range}" cut -d '-' -f '1')
+v_b=$(<<< "${v_option_range}" cut -d '-' -f '2')
+if [[ "${v_a}" -gt "${v_b}" ]]; then
+  echo "ERROR: Value of first page must be less than last page"
+  exit 1
+fi
+
+# Check status
+echo "Checking webcomic status..."
+f_check
+echo ''
+echo "URL: ${v_url_main}"
+
+# Set range
+if [[ "${v_a}" == '' ]]; then
+  v_a=${v_limit_a}
+fi
+if [[ "${v_b}" == '' ]]; then
+  v_b=${v_limit_b}
+fi
+echo "Range: from ${v_a} to ${v_b}"
+
+# Validate range
+if [[ "${v_a}" -lt "${v_limit_a}" ]] || [[ "${v_b}" -gt "${v_limit_b}" ]]; then
+  echo "ERROR: Range is invalid. Must be between ${v_limit_a} and ${v_limit_b}"
+  exit 1
+fi
+
+# Check if output directory exist; if not, use current directory
+if [[ -d "${v_option_output}" ]]; then :; else
+  v_option_output=$(pwd)
+fi
+echo "Output directory: ${v_option_output}"
+echo ''
+
+# Download begins
+v_n=${v_a}
+until [[ "${v_n}" -gt "${v_b}" ]]; do
+  f_download
+  echo ''
+done
