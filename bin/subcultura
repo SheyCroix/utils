@@ -124,7 +124,7 @@ if [[ "${v_option_webcomic}" == '' ]]; then
 fi
 v_a=$(<<< "${v_option_range}" cut -d '-' -f '1')
 v_b=$(<<< "${v_option_range}" cut -d '-' -f '2')
-if [[ "${v_a}" -gt "${v_b}" ]]; then
+if [[ "${v_a}" -gt "${v_b}" ]] && [[ "${v_b}" != '' ]]; then
   echo "ERROR: Value of first page must be less than last page"
   exit 1
 fi
