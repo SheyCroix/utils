@@ -15,6 +15,7 @@ v_cookie_1_2='0,+1,+1,+2,+3,+5,+8,+13,+21,+34,+55,+89'
 v_regex_1='<div class="widget" id="navegacion_tiras">'
 v_regex_2='\/tira\/[0-9]+?\/'
 v_regex_3='<div class="widget" id="tira">'
+v_regex_4='http:\/\/subcultura\.es\/webcomics\/[^\/]+\/([0-9]+)\.([^"]+)'
 
 ################################################################################
 
@@ -57,12 +58,11 @@ v_limit_a=$(<<< "${v_tmp}" head -n '1' | cut -d '/' -f '3')
 
 f_download() {
 echo "[ Downloading: ${v_n} ]"
-v_regex='http:\/\/subcultura\.es\/webcomics\/'${v_option_webcomic}'\/([0-9]+)\.([^"]+)'
 v_url_tmp=${v_url_main}'/tira/'${v_n}
 f_html
 f_tira
 v_img=$(<<< "${v_html}" grep -F -A '3' -e "${v_regex_3}")
-v_img=$(<<< "${v_img}" grep -E -o -e "${v_regex}")
+v_img=$(<<< "${v_img}" grep -E -o -e "${v_regex_4}")
 v_output=${v_option_output}'/'${v_n}'.'${v_img##*.}
 
 if [[ -f "${v_output}" ]]; then
