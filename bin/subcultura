@@ -68,8 +68,7 @@ v_output=${v_option_output}'/'${v_n}'.'${v_img##*.}
 if [[ -f "${v_output}" ]]; then
   echo "Status: Already downloaded"
 else
-  curl -# -L -o "${v_output}" "${v_img}"
-  if [[ -f "${v_output}" ]]; then
+  if curl -# -L -o "${v_output}" "${v_img}"; then
     echo "Status: Ok"
   else
     echo "Status: Error"
