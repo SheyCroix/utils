@@ -23,8 +23,97 @@ v_regex_4='http:\/\/subcultura\.es\/webcomics\/[^\/]+\/([0-9]+)\.([^"]+)'
 
 f_show_help() {
 cat << 'EOF'
-Under construction...
+[USO]
+
+    subcultura [opciones]
+
+[DESCRIPCIÓN]
+
+    <subcultura> es un pequeño script escrito con el fin de automatizar
+    la descarga de webcómics del portal hispano <http://subcultura.es/>
+
+[DEPENDENCIAS]
+
+    - Bash >= 4.3.48
+    - GNU Coreutils >= 8.25
+    - curl >= 7.47.0
+
+[OPCIONES]
+
+    -h, --help
+        Muestra este texto de ayuda.
+
+    -V, --version
+        Muestra la versión actual del programa.
+
+    -w, --webcomic <id-del-webcomic>
+        Indica el webcómic del cuál se descargarán las tiras.
+        Pon únicamente la ID del webcómic, no la URL completa.
+
+    -r, --range <rango-de-tiras>
+        Indica el rango de tiras a descargar. Admite las siguientes
+        posibles combinaciones:
+
+            a-b: Descarga desde la tira a hasta la tira b.
+            a- : Descarga desde la tira a hasta la última tira.
+             -b: Descarga desde la primera tira hasta la tira b.
+             - : Descarga desde la primera tira hasta la última tira.
+
+        En caso de que el parámetro sea un string vacío ('') o de que
+        la opción sea omitida por completo, se tomará como si fuera la
+        última opción de las anteriores ('-').
+
+    -o, --output <directorio-de-salida>
+        Indica el directorio de salida; es decir, el directorio donde
+        se guardarán todas las imágenes descargadas.
+        En caso de que el directorio no exista o de que la opción sea
+        omitida por completo, se usará el directorio actual.
+
+[NOTAS]
+
+  - En caso de descargar grandes cantidades de tiras, recomiendo guardar
+    el registro del proceso para una posterior revisión de errores:
+
+        # Guarda el registro completo en el archivo log.txt
+        <comando> | tee log.txt
+
+        # Guarda el registro de las tiras que no se descargaron
+        # correctamente en el archivo error.txt
+        < log.txt grep -F -B '1' -e 'Status: Error' > error.txt
+
+  - Agradecimientos a John_Wheel <http://subcultura.es/user/John_Wheel/>
+    por el feedback, las recomendaciones y los enlaces a otros recursos.
+
+[COPYRIGHT]
+
+    Copyright (C) 2017  Danezza
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+[REPORTE DE ERRORES]
+
+    Si encuentras algún error en el programa, por favor repórtalo en
+    cualquiera de las siguientes direcciones:
+
+        https://github.com/nxnev/utils/issues
+        http://subcultura.es/user/Danezza/
+
 EOF
+}
+
+f_show_version() {
+echo "2017.07.10"
 }
 
 f_html() {
@@ -92,6 +181,10 @@ while [[ "${1}" != '' ]]; do
   case "${1}" in
     '-h' | '--help')
         f_show_help
+        exit 0
+        ;;
+    '-V' | '--version')
+        f_show_version
         exit 0
         ;;
     '-o' | '--output')
