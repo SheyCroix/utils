@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
+v_user_agent=''
+v_cookies=''
+
+v_regex_1='video\[([0-9]+)\]'
+v_regex_2='src="([^"]+)"'
+
 for v_arg; do
 
   v_url="${v_arg}"
   sleep '3'
-  v_html=$(curl -# -L "${v_url}")
+  v_html=$(curl -# -L -H "${v_user_agent}" -H "${v_cookies}" "${v_url}")
   v_title=$(<<< "${v_html}" grep -F -e 'og:title' | cut -d '"' -f '4')
-  v_links=$(<<< "${v_html}" grep -F -e 'video[' | cut -d '"' -f '1-' --output-delimiter $'\n' | grep -F -A '1' -e 'src' | grep -F -e '/')
+  v_links=$(<<< "${v_html}" grep -E -e "${v_regex_1}" | grep -E -o -e "${v_regex_2}" | cut -d '"' -f '2')
 
   echo "[${v_title}]"
   echo "${v_links}"
