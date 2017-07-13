@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+v_links="${1}"
+v_cookies=''
+v_regex='<a id="favoritelink" href="#" onclick="return false">((.)+?)<\/a>'
+
+v_total='0'
+while read -r v_i; do
+  ((v_total++))
+done < "${v_links}"
+
+v_n='1'
+while read -r v_i; do
+  v_id_1=$(cut -d '/' -f 5 <<< "${v_i}")
+  v_id_2=$(cut -d '/' -f 6 <<< "${v_i}")
+  v_url='https://exhentai.org/g/'${v_id_1}'/'${v_id_2}'/'
+  v_addfav='https://exhentai.org/gallerypopups.php?gid='${v_id_1}'&t='${v_id_2}'&act=addfav'
+  echo "[ Adding: ${v_n} / ${v_total} ]"
+  echo "URL: ${v_i}"
+
+  sleep '3'
+  v_fav_status=$( curl -# -L -b "${v_cookies}" "${v_url}" | grep -P -o -e "${v_regex}")
+
+  if <<< "${v_fav_status}" grep -F -e 'Add to Favorites' > '/dev/null'; then
+    if curl -# -L -b "${v_cookies}" -F 'favcat=0' -F 'update=1' "${v_addfav}" > '/dev/null'; then
+      echo "Status: Ok"
+    else
+      echo "Status: Error"
+    fi
+  elif <<< "${v_fav_status}" grep -F -e 'Plan to read' > '/dev/null'; then
+    echo 'Status: Already added'
+  elif <<< "${v_fav_status}" grep -F -e 'Completed' > '/dev/null'; then
+    echo 'Status: Already completed'
+  else
+    echo 'Status: Already in a gallery'
+  fi
+
+  echo ''
+  ((v_n++))
+done < "${v_links}"
