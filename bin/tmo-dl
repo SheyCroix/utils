@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+v_path=''
+v_links=''
+v_n=''
+v_log=''
+
+while read -r v_i; do
+  v_dir="${v_path}/${v_n}"
+  cd "${v_dir}"
+  echo "Directory: ${v_dir}"
+  echo "URL: ${v_i}"
+  tmo "${v_i}" | tee -a "${v_log}"
+  echo '' | tee -a "${v_log}"
+  ((v_n++))
+done < "${v_links}"
