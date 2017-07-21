@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+v_n=${1}
+read -n "${v_n}" -r -s 'v_message'
+echo "${v_message}" | gpg -c | xxd -p

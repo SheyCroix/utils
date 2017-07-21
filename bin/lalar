@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+v_file=${1}
+< "${v_file}" xxd -p -r | gpg -d
