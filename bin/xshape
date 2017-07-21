@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+a='1'
+b=${1}
+c=${a}
+d=${b}
+
+until [[ "${a}" -gt "${b}" ]]; do
+  pos='1'
+  until [[ "${pos}" -gt "${b}" ]]; do
+    if [[ ( "${pos}" == "${c}" ) || ( "${pos}" == "${d}" ) ]]; then
+      echo -n '*'
+    else
+      echo -n ' '
+    fi
+    ((pos++))
+  done
+  ((a++))
+  ((c++))
+  ((d--))
+  echo ''
+done
